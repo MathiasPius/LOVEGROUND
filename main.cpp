@@ -6,12 +6,12 @@ HWND create_worker_window()
 {
 	HWND progman = FindWindow(L"Progman", nullptr);
 
-	// Send magical create-wallpaper-worker-thread-that-we-can-hijack
+	// Send magical create-wallpaper-worker-thread-that-we-can-hijack message
 	SendMessage(progman, 0x052C, NULL, NULL);
 
 	HWND worker = nullptr;
 
-	// Enum over all windows until we find out newly created worker window
+	// Enum over all windows until we find our newly created worker window
 	EnumWindows([](HWND window, LPARAM lparam) -> BOOL
 	{
 		auto defview = FindWindowEx(window, nullptr, L"SHELLDLL_DefView", nullptr);
@@ -66,7 +66,6 @@ std::pair<HWND, HANDLE> create_love_window(const std::string &game_folder)
 
 	if (!CreateProcessA(nullptr, &cmd[0], nullptr, nullptr, false, NORMAL_PRIORITY_CLASS, nullptr, nullptr, &info, &pi))
 	{
-		auto err = GetLastError();
 		throw std::runtime_error("Failed to create love.exe instance");
 	}
 

@@ -105,8 +105,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		ShowWindow(love.first, SW_SHOWMAXIMIZED);
 
-		// Wait for the LÖVE instance to die
-		WaitForSingleObject(love.second, INFINITE);
+		// Keep waiting on the LÖVE window until it dies.
+		// While it's not dead, send mouse updates.
+		while (WaitForSingleObject(love.second, 16) == WAIT_TIMEOUT)
+		{
+			POINT mouse;
+			GetCursorPos(&mouse);
+
+			SendMessage(love.first, WM_MOUSEMOVE, NULL, (mouse.y << 16) | mouse.x);
+		}
+
 		CloseHandle(love.second);
 	}
 	catch (std::exception &e)
